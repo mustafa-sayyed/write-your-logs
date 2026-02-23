@@ -5,7 +5,7 @@ import service from "../../appwrite/service";
 import type { BlogPost } from "../../appwrite/service";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Pencil, Send, Loader2, ImagePlus, X, Trash2 } from "lucide-react";
+import { Pencil, Send, Loader2, ImagePlus, Trash2 } from "lucide-react";
 import type { RootState } from "@/store/store";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "../ui/button";
