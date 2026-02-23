@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useState } from "react";
 import { Input, Button } from "./index";
 import authService from "../appwrite/auth";
 import { login } from "../store/authSlice";
@@ -7,17 +7,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Spinner } from "./ui/spinner";
 
+interface SignupFormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 function SignupForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm();
-  const email = useRef(null);
-  const password = useRef(null);
-  const name = useRef(null);
+  const { register, handleSubmit } = useForm<SignupFormData>();
   const [error, setError] = useState("");
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
-  const signup = async (data) => {
+  const signup = async (data: SignupFormData) => {
     setError("");
     setIsCreatingAccount(true);
     try {
@@ -25,11 +28,11 @@ function SignupForm() {
       if (userData) {
         const user = await authService.getCurrentUser();
         if (user) {
-          dispatch(login(user));
+          dispatch(login({ userData: user }));
           navigate("/");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       setError("Error in signup: " + error.message);
     } finally {
       setIsCreatingAccount(false);
@@ -46,7 +49,6 @@ function SignupForm() {
         <Input
           type="text"
           placeholder="Enter Name"
-          ref={name}
           {...register("name", {
             required: true,
           })}
@@ -54,7 +56,6 @@ function SignupForm() {
         <Input
           type="email"
           placeholder="Enter Email"
-          ref={email}
           {...register("email", {
             required: true,
           })}
@@ -62,7 +63,6 @@ function SignupForm() {
         <Input
           type="password"
           placeholder="Enter Password"
-          ref={password}
           {...register("password", {
             required: true,
             min: 8,

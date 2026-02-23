@@ -1,8 +1,13 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import service from "../appwrite/service";
 
-function PostCard({ $id, title, image }) {
+interface PostCardProps {
+  $id: string;
+  title: string;
+  image: string;
+}
+
+function PostCard({ $id, title, image }: PostCardProps) {
   return (
     <Link to={`/blog/${$id}`} className="group block">
       <article className="bg-background rounded-xl overflow-hidden border border-border shadow-md hover:shadow-xl transition-all duration-normal hover:-translate-y-1">

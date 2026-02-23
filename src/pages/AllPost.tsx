@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { PostCard, Container } from "../components/index";
 import service from "../appwrite/service";
+import type { BlogPost } from "../appwrite/service";
 import { NotebookTextIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 function AllPost() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

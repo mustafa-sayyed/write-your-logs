@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import service from "../appwrite/service";
+import type { BlogPost } from "../appwrite/service";
 import { Button, Container } from "../components/index";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 function Post() {
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { id } = useParams();
-  const userData = useSelector((state) => state.auth.userData);
+  const { id } = useParams<{ id: string }>();
+  const userData = useSelector((state: RootState) => state.auth.userData);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -36,6 +38,7 @@ function Post() {
   }, [id, navigate]);
 
   const deletePost = async () => {
+    if (!post) return;
     const status = await service.deleteBlogs(post.$id);
     if (status) {
       await service.deleteFile(post.image);

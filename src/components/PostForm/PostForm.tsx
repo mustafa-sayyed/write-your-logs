@@ -1,25 +1,39 @@
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { RTE, Button, Input, Select } from "../index";
 import service from "../../appwrite/service";
+import type { BlogPost } from "../../appwrite/service";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Pencil, Plus } from "lucide-react";
+import type { RootState } from "@/store/store";
 
-function PostForm({ post }) {
-  const { register, handleSubmit, control, watch, setValue, getValues, reset } = useForm({
+interface PostFormProps {
+  post?: BlogPost;
+}
+
+interface PostFormData {
+  title: string;
+  slug: string;
+  content: string;
+  status: string;
+  image: FileList;
+}
+
+function PostForm({ post }: PostFormProps) {
+  const { register, handleSubmit, control, watch, setValue, getValues, reset } = useForm<PostFormData>({
     defaultValues: {
       title: post?.title || "",
-      slug: post?.slug || "",
+      slug: "",
       content: post?.content || "",
       status: post?.status || "active",
     },
   });
 
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.auth.userData);
+  const userData = useSelector((state: RootState) => state.auth.userData);
 
-  const submit = async (data) => {
+  const submit = async (data: PostFormData) => {
     if (post) {
       const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
       if (file) {
@@ -27,8 +41,8 @@ function PostForm({ post }) {
       }
       const dbPost = await service.updateBlogs({
         ...data,
-        image: file ? file.$id : null,
-        userId: userData.userId, // TODO: Check
+        image: file ? file.$id : post.image,
+        userId: userData?.$id || "",
         blogId: post.$id,
       });
       if (dbPost) navigate(`/post/${dbPost.$id}`);
@@ -36,9 +50,9 @@ function PostForm({ post }) {
       const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
 
       const dbPost = await service.createBlogs({
-        userId: userData.$id, // TODO: Check
+        userId: userData?.$id || "",
         ...data,
-        image: file.$id,
+        image: file?.$id || "",
       });
 
       if (dbPost) {
@@ -49,12 +63,12 @@ function PostForm({ post }) {
     }
   };
 
-  const slugTransform = useCallback((value) => {
+  const slugTransform = useCallback((value: string | undefined): string => {
     if (value && typeof value === "string") {
       return value.trim().toLowerCase().replace(/\s/g, "-");
     }
     return "";
-  });
+  }, []);
 
   useEffect(() => {
     reset({
@@ -104,7 +118,7 @@ function PostForm({ post }) {
             label="Slug"
             placeholder="auto-generated-slug"
             {...register("slug", { required: true })}
-            onInput={(e) => setValue("slug", slugTransform(e.target.value))}
+            onInput={(e: React.FormEvent<HTMLInputElement>) => setValue("slug", slugTransform((e.target as HTMLInputElement).value))}
           />
         </div>
 

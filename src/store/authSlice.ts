@@ -1,15 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { Models } from "appwrite";
 
-const initialState = {
+interface AuthState {
+  status: boolean;
+  userData: Models.User<Models.Preferences> | null;
+}
+
+const initialState: AuthState = {
   status: false,
   userData: null,
-}
+};
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, action) => {
+    login: (state, action: PayloadAction<{ userData: Models.User<Models.Preferences> }>) => {
       state.status = true;
       state.userData = action.payload.userData;
     },

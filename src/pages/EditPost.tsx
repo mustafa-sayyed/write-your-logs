@@ -1,14 +1,15 @@
 import { Container } from "../components/index";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PostForm } from "../components";
 import service from "../appwrite/service";
+import type { BlogPost } from "../appwrite/service";
 
 function EditPost() {
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchPost = async () => {

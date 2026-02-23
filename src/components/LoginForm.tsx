@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Button, Input } from "./index";
@@ -7,16 +7,19 @@ import { useForm } from "react-hook-form";
 import authService from "../appwrite/auth";
 import { Spinner } from "./ui/spinner";
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<LoginFormData>();
   const [error, setError] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const email = useRef(null);
-  const password = useRef(null);
 
-  const login = async (data) => {
+  const login = async (data: LoginFormData) => {
     try {
       setError("");
       setIsSigningIn(true);
@@ -24,11 +27,11 @@ function LoginForm() {
       if (session) {
         const userData = await authService.getCurrentUser();
         if (userData) {
-          dispatch(authLogin(userData));
+          dispatch(authLogin({ userData }));
           navigate("/");
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setIsSigningIn(false);
@@ -45,7 +48,6 @@ function LoginForm() {
         <Input
           type="email"
           placeholder="Enter Email"
-          ref={email}
           {...register("email", {
             required: true,
           })}
@@ -53,7 +55,6 @@ function LoginForm() {
         <Input
           type="password"
           placeholder="Enter Password"
-          ref={password}
           {...register("password", {
             required: true,
             min: 8,

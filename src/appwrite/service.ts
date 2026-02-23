@@ -1,11 +1,33 @@
 import config from "../config/config";
 import { Client, ID, Databases, Query, Account, Storage } from "appwrite";
+import type { Models } from "appwrite";
+
+export interface BlogPost extends Models.Document {
+  title: string;
+  content: string;
+  image: string;
+  status: "active" | "inactive";
+  userId: string;
+}
+
+interface CreateBlogParams {
+  title: string;
+  content: string;
+  image: string;
+  status: string;
+  userId: string;
+}
+
+interface UpdateBlogParams extends CreateBlogParams {
+  blogId: string;
+}
 
 class Service {
   client = new Client();
-  account;
-  database;
-  bucket;
+  account: Account;
+  database: Databases;
+  bucket: Storage;
+
   constructor() {
     this.client.setEndpoint(config.appwriteUrl).setProject(config.appwriteProjectId);
     this.account = new Account(this.client);
@@ -13,9 +35,9 @@ class Service {
     this.bucket = new Storage(this.client);
   }
 
-  async getBlog(blogId) {
+  async getBlog(blogId: string): Promise<BlogPost | undefined> {
     try {
-      const res = await this.database.getDocument(
+      const res = await this.database.getDocument<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
         blogId
@@ -26,9 +48,9 @@ class Service {
     }
   }
 
-  async getAllBlogs(queries = [Query.equal("status", "active")]) {
+  async getAllBlogs(queries: string[] = [Query.equal("status", "active")]): Promise<Models.DocumentList<BlogPost> | undefined> {
     try {
-      const res = await this.database.listDocuments(
+      const res = await this.database.listDocuments<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
         queries
@@ -39,10 +61,10 @@ class Service {
     }
   }
 
-  async createBlogs({ title, content, image, status, userId }) {
+  async createBlogs({ title, content, image, status, userId }: CreateBlogParams): Promise<{ res: BlogPost; blogId: string } | undefined> {
     try {
       const blogId = ID.unique();
-      const res = await this.database.createDocument(
+      const res = await this.database.createDocument<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
         blogId,
@@ -60,9 +82,9 @@ class Service {
     }
   }
 
-  async updateBlogs({ title, content, image, status, userId, blogId }) {
+  async updateBlogs({ title, content, image, status, userId, blogId }: UpdateBlogParams): Promise<BlogPost | undefined> {
     try {
-      const res = await this.database.updateDocument(
+      const res = await this.database.updateDocument<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
         blogId,
@@ -74,12 +96,13 @@ class Service {
           userId,
         }
       );
+      return res;
     } catch (error) {
       console.log("Error in updating blogs: ", error);
     }
   }
 
-  async deleteBlogs(blogId) {
+  async deleteBlogs(blogId: string): Promise<boolean> {
     try {
       await this.database.deleteDocument(
         config.appwriteDatabaseId,
@@ -93,7 +116,7 @@ class Service {
     }
   }
 
-  async uploadFile(file) {
+  async uploadFile(file: File): Promise<Models.File | undefined> {
     try {
       return await this.bucket.createFile(config.appwriteBucketId, ID.unique(), file);
     } catch (error) {
@@ -101,7 +124,7 @@ class Service {
     }
   }
 
-  async deleteFile(fileId) {
+  async deleteFile(fileId: string): Promise<boolean> {
     try {
       await this.bucket.deleteFile(config.appwriteBucketId, fileId);
       return true;
@@ -111,9 +134,9 @@ class Service {
     }
   }
 
-  getPreview(fileId) {
+  getPreview(fileId: string): string | undefined {
     try {
-      return this.bucket.getFilePreview(config.appwriteBucketId, fileId);
+      return this.bucket.getFilePreview(config.appwriteBucketId, fileId).toString();
     } catch (error) {
       console.log("Error in getting file preview: ", error);
     }

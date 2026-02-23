@@ -4,10 +4,11 @@ import { Container, LogoutBtn } from "../index";
 import { Moon, Sun } from "lucide-react";
 import { toggleTheme } from "@/store/themeSlice";
 import { Button } from "../ui/button";
+import type { RootState } from "@/store/store";
 
 function Header() {
-  const authStatus = useSelector((state) => state.auth.status);
-  const theme = useSelector((state) => state.theme.theme);
+  const authStatus = useSelector((state: RootState) => state.auth.status);
+  const theme = useSelector((state: RootState) => state.theme.theme);
   const dispatch = useDispatch();
 
   const navItems = [

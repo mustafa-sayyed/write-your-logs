@@ -1,10 +1,17 @@
-import React from "react";
 import { Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
 import { Editor } from "@tinymce/tinymce-react";
 import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
-function RTE({ control, name, defaultValues = "" }) {
-  const theme = useSelector((state) => state.theme.theme);
+interface RTEProps {
+  control: Control<any>;
+  name: string;
+  defaultValues?: string;
+}
+
+function RTE({ control, name, defaultValues = "" }: RTEProps) {
+  const theme = useSelector((state: RootState) => state.theme.theme);
 
   
   return (

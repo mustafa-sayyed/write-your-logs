@@ -1,36 +1,36 @@
-import react, { useId } from "react";
+import React, { useId, forwardRef } from "react";
 
-function Input(
-  { label, type = "text", placeholder = "", className = "", ...props },
-  ref,
-) {
-  const id = useId();
-
-  return (
-    <div className="w-full">
-      {label && (
-        <label htmlFor={id} className="p-1">
-          {label}
-        </label>
-      )}
-      <input
-        id={id}
-        className={`px-3 py-1.5 rounded-lg outline-none focus:ring-1 focus:ring-ring text-foreground border-2 bg-background w-full ${className}`}
-        type={type}
-        placeholder={placeholder}
-        ref={ref}
-        {...props}
-      />
-    </div>
-  );
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  type?: string;
+  placeholder?: string;
+  className?: string;
 }
 
-// The Input component is need to wrapped in a forwardRef call, which allows the component to accept a ref prop. The ref prop is passed to the input element, which allows the parent component to access the input element's DOM node.
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, type = "text", placeholder = "", className = "", ...props }, ref) => {
+    const id = useId();
 
-export default react.forwardRef(Input);
+    return (
+      <div className="w-full">
+        {label && (
+          <label htmlFor={id} className="p-1">
+            {label}
+          </label>
+        )}
+        <input
+          id={id}
+          className={`px-3 py-1.5 rounded-lg outline-none focus:ring-1 focus:ring-ring text-foreground border-2 bg-background w-full ${className}`}
+          type={type}
+          placeholder={placeholder}
+          ref={ref}
+          {...props}
+        />
+      </div>
+    );
+  }
+);
 
-// OR
+Input.displayName = "Input";
 
-// const referencedInput = react.forwardRef(Input);
-
-// export default referencedInput;
+export default Input;

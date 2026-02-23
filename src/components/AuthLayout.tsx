@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/store/store";
 
-function Protected({ children, authentication = true }) {
+interface ProtectedProps {
+  children: React.ReactNode;
+  authentication?: boolean;
+}
+
+function Protected({ children, authentication = true }: ProtectedProps) {
   const navigate = useNavigate();
-  const authStatus = useSelector((state) => state.auth.status);
+  const authStatus = useSelector((state: RootState) => state.auth.status);
 
   const [loading, setLoading] = useState(true);
 

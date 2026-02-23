@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import service from "../appwrite/service";
+import type { BlogPost } from "../appwrite/service";
 import { Button, Container, PostCard } from "../components/index";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Image, NotebookTextIcon, Pencil, Plus, Share2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import type { RootState } from "@/store/store";
 
 function Home() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const authStatus = useSelector((state) => state.auth.status);
+  const authStatus = useSelector((state: RootState) => state.auth.status);
 
   useEffect(() => {
     const fetchPost = async () => {
