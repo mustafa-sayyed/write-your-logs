@@ -18,10 +18,8 @@ function Protected({ children, authentication = true }: ProtectedProps) {
     setLoading(false);
     // agar app auth chahte ho and app ke authStatus false hai to = /login
     // agar app auth nahi chahte ho and app ka autStatus true hai to = /
-    if (authentication && authStatus !== authentication) {
+    if (authentication && !authStatus) {
       navigate("/login");
-    } else if (!authentication && authStatus !== authentication) {
-      navigate("/");
     }
   }, [authStatus, authentication, navigate]);
 

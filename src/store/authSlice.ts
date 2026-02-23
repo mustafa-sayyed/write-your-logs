@@ -16,7 +16,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ userData: Models.User<Models.Preferences> }>) => {
+    login: (
+      state,
+      action: PayloadAction<{ userData: Models.User<Models.Preferences> }>,
+    ) => {
       state.status = true;
       state.userData = action.payload.userData;
     },

@@ -22,7 +22,11 @@ class AuthService {
     this.account = new Account(this.client);
   }
 
-  async createAccount({ email, password, name }: CreateAccountParams): Promise<Models.User<Models.Preferences>> {
+  async createAccount({
+    email,
+    password,
+    name,
+  }: CreateAccountParams): Promise<Models.User<Models.Preferences>> {
     try {
       const userAccount = await this.account.create(ID.unique(), email, password, name);
       await this.login({ email, password });

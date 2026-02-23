@@ -59,7 +59,7 @@ const router = createBrowserRouter([
       {
         path: "/blog/:id",
         element: (
-          <AuthLayout authentication={true}>
+          <AuthLayout authentication={false}>
             <Post />
           </AuthLayout>
         ),

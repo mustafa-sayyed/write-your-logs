@@ -21,7 +21,11 @@ function LogoutBtn() {
   };
 
   return (
-    <Button variant="outline" className="cursor-pointer flex items-center gap-2" onClick={handleLogout}>
+    <Button
+      variant="outline"
+      className="cursor-pointer flex items-center gap-2"
+      onClick={handleLogout}
+    >
       <LogOut size={16} />
       Logout
     </Button>

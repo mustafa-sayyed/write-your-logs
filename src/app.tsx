@@ -9,7 +9,6 @@ import { Spinner } from "./components/ui/spinner";
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  
 
   useEffect(() => {
     authService
@@ -25,12 +24,12 @@ function App() {
         console.log("User not found: ", err);
       })
       .finally(() => setLoading(false));
-      const existingTheme = localStorage.getItem("theme");
-      if (existingTheme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    const existingTheme = localStorage.getItem("theme");
+    if (existingTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
 
   if (loading) {

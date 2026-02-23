@@ -55,6 +55,8 @@ function PostForm({ post }: PostFormProps) {
         image: file?.$id || "",
       });
 
+      console.log("creating post: ", dbPost, data);
+
       if (dbPost) {
         navigate(`/blog/${dbPost.blogId}`);
       } else {

@@ -11,7 +11,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const id = useId();
     return (
       <div className="w-full">
-        {label && <label htmlFor={id} className="mr-2 block text-sm font-medium mb-1" >{label}</label>}
+        {label && (
+          <label htmlFor={id} className="mr-2 block text-sm font-medium mb-1">
+            {label}
+          </label>
+        )}
         <select
           id={id}
           className={`bg-primary-foreground px-10 py-2 rounded-lg border-2 hover:border-primary cursor-pointer ${className}`}
@@ -26,7 +30,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </select>
       </div>
     );
-  }
+  },
 );
 
 Select.displayName = "Select";

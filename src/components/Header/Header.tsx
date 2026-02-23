@@ -32,7 +32,7 @@ function Header() {
           <Link to="/" className="text-xl font-light tracking-tight italic">
             WYL - Write Your Logs
           </Link>
-          <ul className="flex items-center gap-1">
+          <ul className="flex flex-col sm:flex-row items-center gap-1">
             {authStatus ?
               <>
                 {navItems.map((item, index) => (

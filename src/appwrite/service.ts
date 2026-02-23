@@ -40,7 +40,7 @@ class Service {
       const res = await this.database.getDocument<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
-        blogId
+        blogId,
       );
       return res;
     } catch (error) {
@@ -48,12 +48,14 @@ class Service {
     }
   }
 
-  async getAllBlogs(queries: string[] = [Query.equal("status", "active")]): Promise<Models.DocumentList<BlogPost> | undefined> {
+  async getAllBlogs(
+    queries: string[] = [Query.equal("status", "active")],
+  ): Promise<Models.DocumentList<BlogPost> | undefined> {
     try {
       const res = await this.database.listDocuments<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
-        queries
+        queries,
       );
       return res;
     } catch (error) {
@@ -61,7 +63,13 @@ class Service {
     }
   }
 
-  async createBlogs({ title, content, image, status, userId }: CreateBlogParams): Promise<{ res: BlogPost; blogId: string } | undefined> {
+  async createBlogs({
+    title,
+    content,
+    image,
+    status,
+    userId,
+  }: CreateBlogParams): Promise<{ res: BlogPost; blogId: string } | undefined> {
     try {
       const blogId = ID.unique();
       const res = await this.database.createDocument<BlogPost>(
@@ -74,7 +82,7 @@ class Service {
           image,
           status,
           userId,
-        }
+        },
       );
       return { res, blogId };
     } catch (error) {
@@ -82,7 +90,14 @@ class Service {
     }
   }
 
-  async updateBlogs({ title, content, image, status, userId, blogId }: UpdateBlogParams): Promise<BlogPost | undefined> {
+  async updateBlogs({
+    title,
+    content,
+    image,
+    status,
+    userId,
+    blogId,
+  }: UpdateBlogParams): Promise<BlogPost | undefined> {
     try {
       const res = await this.database.updateDocument<BlogPost>(
         config.appwriteDatabaseId,
@@ -94,7 +109,7 @@ class Service {
           image,
           status,
           userId,
-        }
+        },
       );
       return res;
     } catch (error) {
@@ -107,7 +122,7 @@ class Service {
       await this.database.deleteDocument(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
-        blogId
+        blogId,
       );
       return true;
     } catch (error) {
