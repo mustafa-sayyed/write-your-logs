@@ -15,57 +15,57 @@ function Header() {
     {
       name: "Home",
       path: "/",
-      active: authStatus,
     },
     {
       name: "All Post",
       path: "/all-posts",
-      active: authStatus,
     },
     {
       name: "Add Post",
       path: "/add-post",
-      active: authStatus,
-    },
-    {
-      name: "Login",
-      path: "/login",
-      active: !authStatus,
-    },
-    {
-      name: "Signup",
-      path: "/signup",
-      active: !authStatus,
     },
   ];
   return (
-    <header className="h-16 bg-card flex items-center justify-center">
+    <header className="sticky top-0 z-50 h-16 border-b border-border/40 bg-background/80 backdrop-blur-lg supports-backdrop-filter:bg-background/60 flex items-center justify-center">
       <Container>
         <nav className="flex justify-between items-center">
-          <div className="text-2xl font-bold italic">
-            <Link to="/">Write Your Thoughts</Link>
-          </div>
-          <ul className="flex items-center gap-6">
-            {navItems.map((item, index) =>
-              item.active ?
-                <li key={index} className="hover:underline underline-offset-2">
-                  <Link to={item.path}>{item.name}</Link>
+          <Link to="/" className="text-xl font-light tracking-tight italic">
+            WYL - Write Your Logs
+          </Link>
+          <ul className="flex items-center gap-1">
+            {authStatus ?
+              <>
+                {navItems.map((item, index) => (
+                  <li key={index}>
+                    <Link
+                      to={item.path}
+                      className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+                <li className="ml-2">
+                  <LogoutBtn />
                 </li>
-              : null,
-            )}
-          </ul>
-          <div className="flex items-center gap-2">
+              </>
+            : <div className="flex items-center gap-2">
+                <Button asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+              </div>
+            }
             <Button
               variant="outline"
-              className="cursor-pointer"
+              size="icon"
+              className="ml-2 cursor-pointer"
               onClick={() => dispatch(toggleTheme())}
             >
               {theme === "light" ?
-                <Sun />
-              : <Moon />}
+                <Sun className="h-5 w-5" />
+              : <Moon className="h-5 w-5" />}
             </Button>
-            {authStatus && <LogoutBtn />}
-          </div>
+          </ul>
         </nav>
       </Container>
     </header>
