@@ -27,14 +27,14 @@ A full-featured blog application built with React and Appwrite backend.
 ### Prerequisites
 
 - Node.js
-- Appwrite instance (cloud or self-hosted)
+- Appwrite 
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd 14-blog-app
+   git clone https://github.com/mustafa-sayyed/write-your-thoughts.git
+   cd write-your-thoughts
    ```
 
 2. Install dependencies:
@@ -49,6 +49,7 @@ A full-featured blog application built with React and Appwrite backend.
    VITE_APPWRITE_DATABASE_ID=your_database_id
    VITE_APPWRITE_COLLECTION_ID=your_collection_id
    VITE_APPWRITE_BUCKET_ID=your_bucket_id
+   VITE_TINYMCE_API_KEY=your_tinymce_api_key
    ```
 
 4. Start the development server:
