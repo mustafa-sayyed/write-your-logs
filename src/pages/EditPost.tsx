@@ -1,4 +1,3 @@
-import { Container } from "../components/index";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PostForm } from "../components";
@@ -45,13 +44,7 @@ function EditPost() {
     );
   }
 
-  return post ? (
-    <div className="min-h-screen py-8">
-      <Container>
-        <PostForm post={post} />
-      </Container>
-    </div>
-  ) : null;
+  return post ? <PostForm post={post} /> : null;
 }
 
 export default EditPost;

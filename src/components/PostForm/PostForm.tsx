@@ -1,12 +1,14 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { RTE, Button, Input, Select } from "../index";
+import { RTE } from "../index";
 import service from "../../appwrite/service";
 import type { BlogPost } from "../../appwrite/service";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Send, Loader2, ImagePlus, X, Trash2 } from "lucide-react";
 import type { RootState } from "@/store/store";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "../ui/button";
 
 interface PostFormProps {
   post?: BlogPost;
@@ -17,51 +19,114 @@ interface PostFormData {
   slug: string;
   content: string;
   status: string;
-  image: FileList;
 }
 
 function PostForm({ post }: PostFormProps) {
-  const { register, handleSubmit, control, watch, setValue, getValues, reset } = useForm<PostFormData>({
-    defaultValues: {
-      title: post?.title || "",
-      slug: "",
-      content: post?.content || "",
-      status: post?.status || "active",
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isActive, setIsActive] = useState<boolean>(post?.status === "active" || !post);
+  const [featuredImage, setFeaturedImage] = useState<{
+    fileId: string;
+    previewUrl: string;
+  } | null>(null);
+  const [isUploadingFeatured, setIsUploadingFeatured] = useState(false);
+  const featuredInputRef = useRef<HTMLInputElement>(null);
+
+  const { register, handleSubmit, control, watch, setValue, getValues, reset } =
+    useForm<PostFormData>({
+      defaultValues: {
+        title: post?.title || "",
+        slug: "",
+        content: post?.content || "",
+        status: post?.status || "active",
+      },
+    });
 
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
 
+  useEffect(() => {
+    if (post?.image) {
+      setFeaturedImage({
+        fileId: post.image,
+        previewUrl: service.getPreview(post.image) || "",
+      });
+    }
+  }, [post]);
+
+  const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingFeatured(true);
+    try {
+      const uploadedFile = await service.uploadFile(file);
+      if (uploadedFile) {
+        if (featuredImage?.fileId && featuredImage.fileId !== post?.image) {
+          await service.deleteFile(featuredImage.fileId);
+        }
+        setFeaturedImage({
+          fileId: uploadedFile.$id,
+          previewUrl: service.getPreview(uploadedFile.$id) || "",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to upload featured image:", error);
+    } finally {
+      setIsUploadingFeatured(false);
+      if (featuredInputRef.current) {
+        featuredInputRef.current.value = "";
+      }
+    }
+  };
+
+  const removeFeaturedImage = async () => {
+    if (featuredImage?.fileId && featuredImage.fileId !== post?.image) {
+      await service.deleteFile(featuredImage.fileId);
+    }
+    setFeaturedImage(null);
+  };
+
+  const handleImageUpload = async (file: File): Promise<string | undefined> => {
+    const uploadedFile = await service.uploadFile(file);
+    if (uploadedFile) {
+      return service.getPreview(uploadedFile.$id);
+    }
+    return undefined;
+  };
+
   const submit = async (data: PostFormData) => {
-    if (post) {
-      const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
-      if (file) {
-        service.deleteFile(post.image);
-      }
-      const dbPost = await service.updateBlogs({
+    setIsSubmitting(true);
+    try {
+      const postData = {
         ...data,
-        image: file ? file.$id : post.image,
-        userId: userData?.$id || "",
-        blogId: post.$id,
-      });
-      if (dbPost) navigate(`/post/${dbPost.$id}`);
-    } else {
-      const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
+        status: isActive ? "active" : "inactive",
+        image: featuredImage?.fileId || "",
+      };
 
-      const dbPost = await service.createBlogs({
-        userId: userData?.$id || "",
-        ...data,
-        image: file?.$id || "",
-      });
-
-      console.log("creating post: ", dbPost, data);
-
-      if (dbPost) {
-        navigate(`/blog/${dbPost.blogId}`);
+      if (post) {
+        if (post.image && featuredImage?.fileId !== post.image) {
+          await service.deleteFile(post.image);
+        }
+        const dbPost = await service.updateBlogs({
+          ...postData,
+          userId: userData?.$id || "",
+          blogId: post.$id,
+        });
+        if (dbPost) navigate(`/post/${dbPost.$id}`);
       } else {
-        console.log("error ");
+        const dbPost = await service.createBlogs({
+          userId: userData?.$id || "",
+          ...postData,
+        });
+
+        if (dbPost) {
+          navigate(`/blog/${dbPost.blogId}`);
+        }
       }
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -80,6 +145,7 @@ function PostForm({ post }: PostFormProps) {
       status: post?.status || "active",
     });
     setValue("slug", slugTransform(post?.title || ""));
+    setIsActive(post?.status === "active" || !post);
   }, [post, reset]);
 
   useEffect(() => {
@@ -94,121 +160,136 @@ function PostForm({ post }: PostFormProps) {
   }, [watch, slugTransform, setValue]);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-foreground">
-          {post ? "Edit Your Post" : "Create New Post"}
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          {post ? "Update your post details below" : "Share your thoughts with the world"}
-        </p>
+    <div className="min-h-screen">
+
+      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-semibold text-foreground">
+              {post ? "Edit Post" : "New Post"}
+            </h1>
+            <div className="flex items-center gap-2">
+              <Switch checked={isActive} onCheckedChange={setIsActive} id="status" />
+              <label
+                htmlFor="status"
+                className="text-sm text-muted-foreground cursor-pointer"
+              >
+                {isActive ? "Public" : "Draft"}
+              </label>
+            </div>
+          </div>
+          <Button
+            type="button"
+            onClick={handleSubmit(submit)}
+            disabled={isSubmitting}
+            className="px-4 w-fit flex items-center gap-2"
+          >
+            {isSubmitting ?
+              <Loader2 className="w-4 h-4 animate-spin" />
+            : post ?
+              <Pencil className="w-4 h-4" />
+            : <Send className="w-4 h-4" />}
+
+            {post ? "Update" : "Publish"}
+          </Button>
+        </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit(submit)}
-        className="bg-card border border-border rounded-2xl shadow-lg p-6 md:p-8 space-y-6"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            type="text"
-            label="Title"
-            placeholder="Enter an engaging title"
-            {...register("title", { required: true })}
-          />
-          <Input
-            type="text"
-            label="Slug"
-            placeholder="auto-generated-slug"
-            {...register("slug", { required: true })}
-            onInput={(e: React.FormEvent<HTMLInputElement>) => setValue("slug", slugTransform((e.target as HTMLInputElement).value))}
-          />
-        </div>
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit(submit)} className="space-y-6">
 
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            Content
-          </label>
-          <div className="rounded-lg overflow-hidden border border-border">
+          <div>
+            <input
+              type="text"
+              placeholder="Article title..."
+              {...register("title", { required: true })}
+              className="w-full text-4xl font-bold bg-transparent border-none outline-none placeholder:text-muted-foreground/50 text-foreground"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Slug:</span>
+            <input
+              type="text"
+              {...register("slug", { required: true })}
+              onInput={(e: React.FormEvent<HTMLInputElement>) =>
+                setValue("slug", slugTransform((e.target as HTMLInputElement).value))
+              }
+              className="bg-transparent border-none outline-none text-muted-foreground flex-1"
+            />
+          </div>
+
+          <div>
+            <input
+              ref={featuredInputRef}
+              type="file"
+              accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+              onChange={handleFeaturedImageUpload}
+              className="hidden"
+            />
+
+            {featuredImage ?
+              <div className="relative group">
+                <img
+                  src={featuredImage.previewUrl}
+                  alt="Featured image"
+                  className="w-full aspect-video object-cover rounded-lg"
+                />
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-4">
+                  <Button
+                    type="button"
+                    onClick={() => featuredInputRef.current?.click()}
+                    className="cursor-pointer flex items-center gap-2"
+                  >
+                    Change Image
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={removeFeaturedImage}
+                    variant="destructive"
+                    className="cursor-pointer"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
+            : <button
+                type="button"
+                onClick={() => featuredInputRef.current?.click()}
+                disabled={isUploadingFeatured}
+                className="w-full h-64 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-muted/30 transition-colors cursor-pointer"
+              >
+                {isUploadingFeatured ?
+                  <>
+                    <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+                    <span className="text-muted-foreground">Uploading...</span>
+                  </>
+                : <>
+                    <ImagePlus className="w-10 h-10 text-muted-foreground" />
+                    <div className="text-center">
+                      <p className="text-muted-foreground font-medium">
+                        Add a cover image
+                      </p>
+                      <p className="text-sm text-muted-foreground/70">
+                        Click to upload
+                      </p>
+                    </div>
+                  </>
+                }
+              </button>
+            }
+          </div>
+
+          <div className="border border-border rounded-lg overflow-hidden">
             <RTE
               control={control}
               defaultValues={getValues("content")}
-              name={"content"}
+              name="content"
+              onImageUpload={handleImageUpload}
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 place-items-center">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Featured Image
-            </label>
-            <div className="relative">
-              <input
-                type="file"
-                accept="image/png, image/jpeg, image/jpg"
-                className="
-                  w-full px-4 py-2
-                  bg-background text-foreground
-                  border-2 border-border
-                  rounded-lg
-                  cursor-pointer
-                  transition-all duration-fast
-                  hover:border-primary hover:bg-primary/5
-                  file:mr-4 file:py-1 file:px-4
-                  file:rounded-lg file:border-0
-                  file:text-sm file:font-medium
-                  file:bg-primary file:text-primary-foreground
-                  file:cursor-pointer file:transition-all"
-                {...register("image", {
-                  required: !post,
-                })}
-              />
-            </div>
-          </div>
-
-          <Select
-            label="Status"
-            options={["active", "inactive"]}
-            {...register("status", { required: true })}
-          />
-        </div>
-
-        {post && post.image && (
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
-              Current Image
-            </label>
-            <div className="relative rounded-xl overflow-hidden border border-border bg-muted">
-              <img
-                src={service.getPreview(post.image)}
-                alt={post.title}
-                className="w-full max-h-80 object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-            </div>
-          </div>
-        )}
-
-        <div className="pt-4 flex justify-end">
-          <Button
-            type="submit"
-            className="w-fit px-8 py-2"
-          >
-            <span className="flex items-center gap-2">
-              {post ?
-                <div className="flex items-center gap-2">
-                  <Pencil />
-                  Update Post
-                </div>
-              : <div className="flex items-center gap-2">
-                  <Plus />
-                  Publish Post
-                </div>
-              }
-            </span>
-          </Button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

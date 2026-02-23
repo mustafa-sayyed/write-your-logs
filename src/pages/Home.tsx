@@ -127,13 +127,11 @@ function Home() {
   return (
     <div className="min-h-screen py-8">
       <Container>
-        {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Latest Posts</h1>
           <p className="text-muted-foreground mt-1">Discover stories, ideas, and expertise</p>
         </div>
 
-        {/* Posts Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post) => (
             <PostCard key={post.$id} {...post} />

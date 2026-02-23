@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import service from "../appwrite/service";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, FileText } from "lucide-react";
 
 interface PostCardProps {
   $id: string;
   title: string;
-  image: string;
+  image?: string;
 }
 
 function PostCard({ $id, title, image }: PostCardProps) {
@@ -14,11 +14,17 @@ function PostCard({ $id, title, image }: PostCardProps) {
       <article className="bg-background rounded-xl overflow-hidden border border-border shadow-md hover:shadow-xl transition-all duration-normal hover:-translate-y-1">
 
         <div className="relative aspect-video overflow-hidden bg-muted">
-          <img
-            src={service.getPreview(image)}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-normal group-hover:scale-105"
-          />
+          {image ? (
+            <img
+              src={service.getPreview(image)}
+              alt={title}
+              className="w-full h-full object-cover transition-transform duration-normal group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+              <FileText className="w-12 h-12 text-primary/40" />
+            </div>
+          )}
         </div>
 
         <div className="p-4">

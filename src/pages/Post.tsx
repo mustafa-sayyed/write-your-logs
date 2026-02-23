@@ -79,13 +79,15 @@ function Post() {
             <h1 className="text-2xl mb-4 capitalize font-semibold md:text-4xl drop-shadow-lg">
               {post.title}
             </h1>
-            <div className="relative rounded-2xl overflow-hidden shadow-xl mb-8">
-              <img
-                src={service.getPreview(post.image)}
-                alt={post.title}
-                className="w-full aspect-video object-cover"
-              />
-            </div>
+            {post.image && (
+              <div className="relative rounded-2xl overflow-hidden shadow-xl mb-8">
+                <img
+                  src={service.getPreview(post.image)}
+                  alt={post.title}
+                  className="w-full aspect-video object-cover"
+                />
+              </div>
+            )}
 
             {isAuthorised && (
               <div className="flex flex-wrap gap-3 mb-8 p-4 bg-card rounded-xl border border-border">

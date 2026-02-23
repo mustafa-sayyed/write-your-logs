@@ -55,7 +55,10 @@ class Service {
       const res = await this.database.listDocuments<BlogPost>(
         config.appwriteDatabaseId,
         config.appwriteCollectionId,
-        queries,
+        [
+          Query.limit(50),
+          ...queries,
+        ],
       );
       return res;
     } catch (error) {

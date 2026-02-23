@@ -1,13 +1,7 @@
-import { PostForm, Container } from "../components/index";
+import { PostForm } from "../components/index";
 
 function AddPost() {
-  return (
-    <div className="min-h-screen py-8">
-      <Container>
-        <PostForm />
-      </Container>
-    </div>
-  );
+  return <PostForm />;
 }
 
 export default AddPost;
