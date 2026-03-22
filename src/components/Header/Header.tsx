@@ -114,16 +114,16 @@ function Header() {
                 </>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" asChild>
-                    <Link to="/login" className="flex items-center gap-2">
-                      <LogIn className="w-4 h-4" />
-                      Sign In
-                    </Link>
-                  </Button>
                   <Button asChild>
                     <Link to="/signup" className="flex items-center gap-2">
                       <UserPlus className="w-4 h-4" />
                       Get Started
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/login" className="flex items-center gap-2">
+                      <LogIn className="w-4 h-4" />
+                      Sign In
                     </Link>
                   </Button>
                 </div>

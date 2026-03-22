@@ -286,7 +286,7 @@ function TipTapEditor({
     extensions: [
       StarterKit.configure({
         heading: {
-          levels: [1, 2, 3],
+          levels: [1, 2, 3, 4],
         },
       }),
       Underline,
@@ -315,7 +315,7 @@ function TipTapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-lg dark:prose-invert max-w-none min-h-[500px] p-6 focus:outline-none",
+          "max-w-none min-h-[500px] p-6 focus:outline-none prose [&_pre_code]:text-gray-900 dark:[&_pre_code]:text-gray-200 dark:prose-invert prose-ol:flex prose-ol:flex-col prose-ol:gap-1 prose-ul:flex prose-ul:flex-col prose-li:my-0.5 [&_li_p]:m-0",
       },
     },
   });
