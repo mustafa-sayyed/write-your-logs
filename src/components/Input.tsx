@@ -14,13 +14,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="p-1">
+          <label htmlFor={id} className="block text-sm font-medium mb-1.5">
             {label}
           </label>
         )}
         <input
           id={id}
-          className={`px-3 py-1.5 rounded-lg outline-none focus:ring-1 focus:ring-ring text-foreground border-2 bg-background w-full ${className}`}
+          className={`px-4 py-2.5 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground border border-border bg-background w-full transition-all placeholder:text-muted-foreground ${className}`}
           type={type}
           placeholder={placeholder}
           ref={ref}

@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+@plugin "@tailwindcss/typography";
+
 :root {
   --background: oklch(0.9777 0.0041 301.4256);
   --foreground: oklch(0.3651 0.0325 287.0807);
@@ -36,8 +38,8 @@
   --sidebar-accent-foreground: oklch(0.3394 0.0441 1.7583);
   --sidebar-border: oklch(0.8719 0.0198 302.169);
   --sidebar-ring: oklch(0.6104 0.0767 299.7335);
-  --font-sans: Geist, sans-serif;
-  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
   --font-mono: "Fira Code", "Courier New", monospace;
   --radius: 0.5rem;
   --shadow-x: 1px;
@@ -91,8 +93,8 @@
   --sidebar-accent-foreground: oklch(0.8391 0.0692 2.6681);
   --sidebar-border: oklch(0.2847 0.0346 291.2726);
   --sidebar-ring: oklch(0.7058 0.0777 302.0489);
-  --font-sans: Geist, sans-serif;
-  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
   --font-mono: "Fira Code", "Courier New", monospace;
   --radius: 0.5rem;
   --shadow-x: 1px;
@@ -164,14 +166,24 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 body {
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: var(--tracking-normal);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 10% 12%, color-mix(in oklab, var(--primary) 17%, transparent), transparent 34%),
+    radial-gradient(circle at 88% 16%, color-mix(in oklab, var(--accent) 13%, transparent), transparent 30%),
+    linear-gradient(180deg, color-mix(in oklab, var(--background) 95%, var(--foreground) 5%), var(--background));
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.012em;
 }
 
 html {
@@ -189,6 +201,47 @@ html {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.app-shell {
+  position: relative;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image: linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+  opacity: 0.28;
+}
+
+.app-main {
+  position: relative;
+  isolation: isolate;
+}
+
+.surface-panel {
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background: color-mix(in oklab, var(--card) 90%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.bg-grid-pattern {
+  background-image: linear-gradient(color-mix(in oklab, var(--border) 65%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--border) 65%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@media (max-width: 768px) {
+  .app-shell::before {
+    background-size: 34px 34px;
+    opacity: 0.18;
   }
 }
 

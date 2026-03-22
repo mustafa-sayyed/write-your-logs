@@ -41,8 +41,8 @@ function App() {
     );
   }
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main>
+    <div className="app-shell min-h-screen bg-background text-foreground">
+      <main className="app-main">
         <Header />
         <Outlet />
         <Footer />

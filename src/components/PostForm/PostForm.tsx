@@ -112,7 +112,7 @@ function PostForm({ post }: PostFormProps) {
           userId: userData?.$id || "",
           blogId: post.$id,
         });
-        if (dbPost) navigate(`/post/${dbPost.$id}`);
+        if (dbPost) navigate(`/blog/${dbPost.$id}`);
       } else {
         const dbPost = await service.createBlogs({
           userId: userData?.$id || "",
