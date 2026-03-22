@@ -2,7 +2,17 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Container, LogoutBtn } from "../index";
-import { Moon, Sun, Menu, X, PenSquare, Home, BookOpen, LogIn, UserPlus } from "lucide-react";
+import {
+  Moon,
+  Sun,
+  Menu,
+  X,
+  PenSquare,
+  Home,
+  BookOpen,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
 import { toggleTheme } from "@/store/themeSlice";
 import { Button } from "../ui/button";
 import type { RootState } from "@/store/store";
@@ -66,30 +76,25 @@ function Header() {
     <>
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "h-14 border-b border-border/60 bg-background/95 backdrop-blur-xl shadow-sm"
-            : "h-16 border-b border-border/40 bg-background/80 backdrop-blur-lg"
+          isScrolled ?
+            "h-14 border-b border-border/60 bg-background/95 backdrop-blur-xl shadow-sm"
+          : "h-16 border-b border-border/40 bg-background/80 backdrop-blur-lg"
         }`}
       >
         <Container className="h-full">
           <nav className="flex justify-between items-center h-full">
             <Link
               to="/"
-              className="flex items-center gap-2 text-xl font-semibold tracking-tight group"
+              className="text-xl font-semibold tracking-tight italic"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                <PenSquare className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="hidden sm:block">
-                <span className="text-primary">WYL</span>
-                <span className="text-muted-foreground font-normal text-sm ml-1.5">
-                  Write Your Logs
-                </span>
+              <span className="text-primary">WYL</span>
+              <span className="text-muted-foreground font-normal text-sm ml-1.5">
+                Write Your Logs
               </span>
             </Link>
 
             <div className="hidden md:flex items-center gap-1">
-              {authStatus ? (
+              {authStatus ?
                 <>
                   {navItems.map((item) => {
                     const Icon = item.icon;
@@ -99,9 +104,9 @@ function Header() {
                         key={item.path}
                         to={item.path}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          isActive
-                            ? "bg-primary/10 text-primary"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                          isActive ?
+                            "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent"
                         }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -112,8 +117,7 @@ function Header() {
                   <div className="w-px h-6 bg-border mx-2" />
                   <LogoutBtn />
                 </>
-              ) : (
-                <div className="flex items-center gap-2">
+              : <div className="flex items-center gap-2">
                   <Button asChild>
                     <Link to="/signup" className="flex items-center gap-2">
                       <UserPlus className="w-4 h-4" />
@@ -127,18 +131,16 @@ function Header() {
                     </Link>
                   </Button>
                 </div>
-              )}
+              }
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="ml-2 cursor-pointer"
                 onClick={() => dispatch(toggleTheme())}
               >
-                {theme === "light" ? (
+                {theme === "light" ?
                   <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
+                : <Moon className="h-5 w-5" />}
               </Button>
             </div>
 
@@ -149,11 +151,9 @@ function Header() {
                 className="cursor-pointer"
                 onClick={() => dispatch(toggleTheme())}
               >
-                {theme === "light" ? (
+                {theme === "light" ?
                   <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
+                : <Moon className="h-5 w-5" />}
               </Button>
               <Button
                 variant="ghost"
@@ -162,11 +162,9 @@ function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
               >
-                {isMenuOpen ? (
+                {isMenuOpen ?
                   <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
+                : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </nav>
@@ -175,9 +173,7 @@ function Header() {
 
       <div
         className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
-          isMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+          isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
         <div
@@ -186,14 +182,12 @@ function Header() {
         />
         <div
           className={`absolute top-14 left-0 right-0 bg-background border-b border-border shadow-lg transition-all duration-300 ${
-            isMenuOpen
-              ? "translate-y-0 opacity-100"
-              : "-translate-y-4 opacity-0"
+            isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
           }`}
         >
           <Container className="py-4">
             <div className="flex flex-col gap-2">
-              {authStatus ? (
+              {authStatus ?
                 <>
                   {navItems.map((item) => {
                     const Icon = item.icon;
@@ -203,9 +197,9 @@ function Header() {
                         key={item.path}
                         to={item.path}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all ${
-                          isActive
-                            ? "bg-primary/10 text-primary"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                          isActive ?
+                            "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent"
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -218,8 +212,7 @@ function Header() {
                     <LogoutBtn />
                   </div>
                 </>
-              ) : (
-                <div className="flex flex-col gap-2">
+              : <div className="flex flex-col gap-2">
                   <Link
                     to="/login"
                     className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
@@ -235,7 +228,7 @@ function Header() {
                     Get Started
                   </Link>
                 </div>
-              )}
+              }
             </div>
           </Container>
         </div>

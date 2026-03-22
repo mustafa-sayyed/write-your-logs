@@ -33,8 +33,8 @@ A full-featured blog application built with React and Appwrite backend.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mustafa-sayyed/write-your-thoughts.git
-   cd write-your-thoughts
+   git clone https://github.com/mustafa-sayyed/write-your-logs.git
+   cd write-your-logs
    ```
 
 2. Install dependencies:

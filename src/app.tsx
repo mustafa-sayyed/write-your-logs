@@ -5,6 +5,7 @@ import { login, logout } from "./store/authSlice";
 import { Footer, Header } from "./components";
 import { Outlet } from "react-router-dom";
 import { Spinner } from "./components/ui/spinner";
+import config from "./config/config";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ function App() {
         console.log("User not found: ", err);
       })
       .finally(() => setLoading(false));
-    const existingTheme = localStorage.getItem("theme");
+    const existingTheme = localStorage.getItem(config.themeStorageKey);
     if (existingTheme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
